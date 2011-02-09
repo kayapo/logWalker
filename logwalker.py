@@ -1,6 +1,8 @@
 #!/usr/bin/env python
+
 __author__="kayapo"
 __date__ ="$2011.02.04. 18:18:33$"
+__TODO__ = "Minden fuggvenyt es osztalyt kommentezni"
 
 import sys
 import MySQLdb
@@ -55,6 +57,30 @@ class JSONify():
                     'includeMessage':['include', 'exclude'],
                     'page':['10', '25', '50', '100', '250', '500', '1000', '2500', '5000']
                  }
+
+    def __init__(self):
+        db = DB()
+        conn = db.connector("syslog")
+        pLog = LOG()
+        
+        tags = db.runQuery(conn, "SELECT tag FROM tags;")
+        pLog.logger("Tags in JSONify %s" % str(tags))
+        realTags = []
+        for tag in tags:
+            realTags.append(tag['tag'])
+
+        self.validation["tags"] = realTags
+        
+        hosts = db.runQuery(conn, "SELECT host FROM hosts;")
+        pLog.logger("Hosts in JSONify %s" % str(hosts))
+        realHosts = []
+        for host in hosts:
+            realHosts.append(host['host'])
+
+        self.validation["hosts"] = realHosts
+
+        pLog.logger("JSONify.validation = %s" % self.validation)
+
 
     def jsonToSQL(self,jsonObj):
         pLog = LOG()
