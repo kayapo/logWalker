@@ -1,0 +1,291 @@
+/* 
+    Document   : site
+    Created on : 2011.02.04., 18:19:44
+    Author     : kayapo
+    Description:
+        Purpose of the stylesheet follows.
+*/
+
+body {
+    font-family: Arial,Helvetica,sans-serif;
+    font-size: 1.0em;
+    background: #f2f2f2;
+    padding: 0;
+    margin: 0;
+}
+
+label {
+    font-size: 0.7em;
+}
+
+li {
+    list-style: none;
+    display: inline;
+}
+
+/*    -=: SEARCH FIELD :=-    */
+
+#search {
+    background: #d7d7d7;
+    border-bottom: #a0a0a0 1px solid;
+    height: 260px;
+}
+
+#searchform {
+    margin: 0px auto 0 auto;
+    padding: 2px 0 0 0;
+    visibility: visible;
+    width: 1000px;
+    text-align: center;
+}
+
+#searchform form {
+    float: left;
+    vertical-align: top;
+    width: 1000px;
+}
+
+.fset1 {
+    width: 140px;
+    margin: 5px 3px 5px 2px;
+    padding: 5px;
+    white-space: nowrap;
+    display: inline;
+    height: 165px;
+}
+
+.fset2 {
+    width: 180px;
+    margin: 5px 3px 5px 2px;
+    padding: 5px;
+    white-space: nowrap;
+    display: inline;
+    height: 165px;
+    vertical-align: top;
+}
+
+#searchform select {
+    white-space: nowrap;
+    width: 130px;
+}
+
+#searchflip {
+    margin: 0 0 1px 2px;
+    height: 20px;
+}
+
+#hideicon {
+    background: transparent;
+    border: 0;
+}
+
+#buttons {
+    text-align: center;
+    width: 1000px;
+    margin: 0 auto;
+    cursor: pointer;
+}
+
+#buttons img {
+    padding: 5px 3px 5px 2px;
+    border: none;
+    margin: 0;
+}
+
+/*    -=: HEADER :=-    */
+
+#table-top {
+    margin: 1.5em auto 2px auto;
+    padding: 0.5em;
+    font-size: 0.65em;
+    font-weight: normal;
+    border: 1px green dashed;
+    width: 1000px;
+    height: 18px;
+}
+
+#table-top div {
+    float: left;
+    font-weight: bold;
+    margin: 0 1px;
+    text-align: center;
+    position: relative;
+}
+
+#table-top .id {
+    width: 67px;
+}
+
+#table-top .datetime {
+    width: 146px;
+    border-left: 1px dotted darkgray;
+}
+
+#table-top .host {
+    width: 105px;
+    border-left: 1px dotted darkgray;
+}
+
+#table-top .level {
+    width: 105px;
+    border-left: 1px dotted darkgray;
+}
+
+#table-top .tag {
+    width: 105px;
+    border-left: 1px dotted darkgray;
+}
+
+#table-top .message {
+    width: 429px;
+    border-left: 1px dotted darkgray;
+}
+
+#table-top .size {
+    width: 2px;
+    cursor: ew-resize;
+    padding: 0;
+    margin: 0;
+    background: #101010;
+}
+/*    -=: LOGLEVELS :=-    */
+
+.debug {
+    background: #ccccff;
+    padding: 2px;
+    height: 18px;
+}
+
+.info {
+    background: #ccffcc;
+    padding: 2px;
+    height: 18px;
+}
+
+.notice {
+    background: #f2fff2;
+    padding: 2px;
+    height: 18px;
+}
+
+.warning {
+    background: #f2ff7f;
+    padding: 2px;
+    height: 18px;
+}
+
+.err {
+    background: #f2f21f;
+    padding: 2px;
+    height: 18px;
+}
+
+.crit {
+    background: #ff8925;
+    padding: 2px;
+    height: 18px;
+}
+
+.alert {
+    background: #ff0000;
+    padding: 2px;
+    height: 18px;
+}
+
+.emerg {
+    background: #cc0000;
+    color: #f2f2f2;
+    padding: 2px;
+    height: 18px;
+}
+
+/*    -=: TABLE CELS :=-    */
+#resoults {
+    margin: 3px auto 1.5em auto;
+    padding: 0.5em;
+    font-size: 0.65em;
+    font-weight: normal;
+    border: 1px blue dashed;
+    width: 1000px;
+}
+
+#resoults .id {
+    width: 60px;
+    margin: 0 1px 0 1px;
+    text-align: right;
+    font-weight: bold;
+    padding: 0 3px;
+    overflow: hidden;
+}
+
+#resoults .datetime {
+    width: 140px;
+    margin: 0 1px;
+    text-align: center;
+    padding: 0 3px;
+    overflow: hidden;
+    border-left: 1px dotted darkgray;
+}
+
+#resoults .host {
+    width: 100px;
+    margin: 0 1px;
+    text-align: center;
+    padding: 0 3px;
+    overflow: hidden;
+    border-left: 1px dotted darkgray;
+}
+
+#resoults .level {
+    width: 100px;
+    margin: 0 1px;
+    padding: 0 3px;
+    text-align: center;
+    font-style: oblique;
+    overflow: hidden;
+    border-left: 1px dotted darkgray;
+}
+
+#resoults .tag {
+    width: 100px;
+    margin: 0 1px;
+    padding: 0 3px;
+    text-align: center;
+    font-weight: bold;
+    overflow: hidden;
+    border-left: 1px dotted darkgray;
+}
+
+#resoults .message {
+    width: 429px;
+    margin: 0 1px;
+    padding: 0 10px;
+    text-align: left;
+    overflow: hidden;
+    border-left: 1px dotted darkgray;
+    white-space: nowrap;
+}
+
+/* -=: LOGLINE BACKGROUND COLORING :=-    */
+
+#light {
+    background: #ececec;
+    padding: 2px 0 2px 0;
+    text-align: center;
+    height: 22px;
+}
+
+#light div {
+    float: left;
+}
+
+#dark {
+    background: #d0d0d0;
+    padding: 2px 0 2px 0;
+    text-align: center;
+    height: 22px;
+}
+
+#dark div {
+    float: left;
+}

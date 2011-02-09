@@ -1,0 +1,98 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+  <head>
+    <title></title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <link rel="stylesheet" href="_css/site.css">
+    <script type="text/javascript" src="_js/site.js"></script>
+    <script type="text/javascript" src="_js/json.js"></script>
+  </head>
+  <body onload="loadForm();">
+      <div id="search">
+          <div id="searchform">
+              <form id="form" name="searchform">
+                  <fieldset class="fset1">
+                      <legend>Facility</legend>
+                      <select multiple size="7" name="facility">
+                          <option value="auth">AUTH</option>
+                          <option value="authpriv">AUTHPRIV</option>
+                          <option value="cron">CRON</option>
+                          <option value="daemon">DAEMON</option>
+                          <option value="ftp">FTP</option>
+                          <option value="kern">KERN</option>
+                          <option value="local0">LOCAL0</option>
+                          <option value="local1">LOCAL1</option>
+                          <option value="local2">LOCAL2</option>
+                          <option value="local3">LOCAL3</option>
+                          <option value="local5">LOCAL5</option>
+                          <option value="local6">LOCAL6</option>
+                          <option value="local7">LOCAL7</option>
+                          <option value="lpr">LPR</option>
+                          <option value="mail">MAIL</option>
+                          <option value="news">NEWS</option>
+                          <option value="syslog">SYSLOG</option>
+                          <option value="user">USER</option>
+                          <option value="uucp">UUCP</option>
+                      </select>
+                      <p>
+                          <input type="radio" checked name="includeFacility" value="include" /><label>Include</label>
+                          <input type="radio" name="includeFacility" value="exclude" /><label>Exclude</label>
+                      </p>
+                  </fieldset>
+                  <fieldset class="fset1">
+                      <legend>Priority</legend>
+                      <select size="7" multiple name="priority">
+                          <option value="emerg">EMERG</option>
+                          <option value="alert">ALERT</option>
+                          <option value="crit">CRIT</option>
+                          <option value="err">ERR</option>
+                          <option value="warning">WARNING</option>
+                          <option value="notice">NOTICE</option>
+                          <option value="info">INFO</option>
+                          <option value="debug">DEBUG</option>
+                      </select>
+                      <p>
+                          <input type="radio" checked name="includePriority" value="include" /><label>Include</label>
+                          <input type="radio" name="includePriority" value="exclude" /><label>Exclude</label>
+                      </p>
+                  </fieldset>
+                  <fieldset id="hosts" class="fset1"><legend>Hosts</legend></fieldset>
+                  <fieldset id="tags" class="fset1"><legend>Tags</legend></fieldset>
+                  <fieldset class="fset2">
+                      <legend>Message</legend>
+                      <label>Search: </label><input type="text" size="30" name="message" />
+                      <p>
+                          <input type="radio" checked value="include" name="includeMessage" /><label>Include</label>
+                          <input type="radio" value="exclude" name="includeMessage" /><label>Exclude</label>
+                      </p>
+                      <label for="before">Before:</label>
+                      <input type="text" size="19" name="before" value="0000-00-00 00:00:00" onclick="this.value='';" /><input type="checkbox" name="searchBefore" /><br />
+                      <label for="after">After:&nbsp;&nbsp;&nbsp;</label>
+                      <input type="text" size="19" name="after" value="0000-00-00 00:00:00" onclick="this.value='';" /><input type="checkbox" name="searchAfter" /><br />
+                      <label>Lines:&nbsp;&nbsp;</label>
+                      <select name="page">
+                          <option value="10">10</option>
+                          <option value="25">25</option>
+                          <option value="50">50</option>
+                          <option value="100">100</option>
+                          <option value="250">250</option>
+                          <option value="500">500</option>
+                          <option value="1000">1000</option>
+                          <option value="2500">2500</option>
+                          <option value="5000">5000</option>
+                      </select>
+                      <label>/ page</label>
+                  </fieldset>
+              </form>
+          </div>
+          <div id="buttons">
+              <img src="_imgs/send.png" width="72" height="36" alt="Send" title="Send" onclick="javascript:getURL();" /><img src="_imgs/refresh.png" width="72" height="36" alt="Reset" title="Reset" onclick="javascript:formReset();" />
+          </div>
+          <!-- <div id="searchflip"><img id="hideicon" width="20" height="20" alt="(un)hide" src="_imgs/hidesearch.gif" onclick="javascript:flipForm();" /></div> -->
+      </div>
+      <div id="content">
+          <div id="table-top"><div class="id"> ID. </div><div class="datetime"> Date </div><div class="host"> Host </div><div class="level"> Level </div><div class="tag"> Tag </div><div class="message"> Message </div></div>
+          <div id="resoults">&nbsp;</div>
+      </div>
+  </body>
+</html>
