@@ -1,5 +1,10 @@
 var http = null
 
+//
+// TODO:
+//  Az osszes fuggvenyt kommentezni
+//
+
 /*
  * A html elemet objectumma alakitja es az
  * objectummal ter vissza:
@@ -167,27 +172,25 @@ this.processForm = function() {
     var formElements = document.searchform
     for ( var sF = 1; sF < formElements.length; sF++ ) {
         if ( formElements[sF].name !== undefined && formElements[sF].value !== undefined ) {
-            alert(formElements[sF].name + " " + formElements[sF].value + " " + formElements[sF].type)
-            if ( formElements[sF].length !== undefined ) {
-                if ( formElements[sF].type == 'select-multiple' && formElements[sF].options.length > 0 ) {
-                    var elements = Array()
-                    for ( var e = 0; e < formElements[sF].options.length; e++ ) {
-                        if ( formElements[sF].options[e].selected ) {
-                            // alert(formElements[sF].options[e].value)
-                            elements.push(formElements[sF].options[e].value)
-                        }
+            //alert(formElements[sF].name + " " + formElements[sF].value + " " + formElements[sF].type)
+            if ( formElements[sF].type == 'select-multiple' && formElements[sF].options.length > 0 ) {
+                var elements = Array()
+                for ( var e = 0; e < formElements[sF].options.length; e++ ) {
+                    if ( formElements[sF].options[e].selected ) {
+                        // alert(formElements[sF].options[e].value)
+                        elements.push(formElements[sF].options[e].value)
                     }
-                    ret.push( '{"' + formElements[sF].name + '":' + elements.toSource() + '}' )
-                } else {
-                    ret.push( '{"' + formElements[sF].name + '":"' + formElements[sF].value + '"}' )
                 }
-            } else if ( formElements[sF].checked ) {
+                ret.push( '{"' + formElements[sF].name + '":' + elements.toSource() + '}' )
+            } else if ( ( formElements[sF].type == 'radio' || formElements[sF].type == 'checkbox' ) && formElements[sF].checked ) {
                 ret.push( '{"' + formElements[sF].name + '":"' + formElements[sF].value + '"}' )
-            } else if ( formElements[sF].value !== undefined && formElements[sF].value != '' && formElements[sF].value != '0000-00-00 00:00:00' ) {
+            } else if ( formElements[sF].type == 'text' && ( formElements[sF].value != '' || formElements[sF].value != undefined ) ) {
+                ret.push( '{"' + formElements[sF].name + '":"' + formElements[sF].value + '"}' )
+            } else if ( formElements[sF].type == 'select-one' ) {
                 ret.push( '{"' + formElements[sF].name + '":"' + formElements[sF].value + '"}' )
             }
         }
     }
-
+    alert('[' + ret.toString() + ']')
     return '[' + ret.toString() + ']'
 }
