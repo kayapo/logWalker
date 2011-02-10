@@ -81,15 +81,18 @@ li {
 
 #buttons {
     text-align: center;
+    vertical-align: middle;
     width: 1000px;
     margin: 0 auto;
 }
 
 #buttons img {
-    padding: 5px 3px 5px 2px;
+    padding: 5px;
     border: none;
     margin: 0;
     cursor: pointer;
+    white-space: nowrap;
+    vertical-align: middle;
 }
 
 /*    -=: HEADER :=-    */
