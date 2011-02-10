@@ -47,7 +47,7 @@ class DB:
 
 class JSONify():
     validation = {
-                    'keys':['facility', 'includeFacility', 'priority', 'includePriority', 'tags', 'includeTags', 'hosts', 'includeHosts', 'message', 'includeMessages', 'searchBefore', 'searchAfter', 'page'],
+                    'keys':['facility', 'includeFacility', 'priority', 'includePriority', 'tags', 'includeTags', 'hosts', 'includeHosts', 'message', 'includeMessage', 'searchBefore', 'searchAfter', 'page', 'before', 'after'],
                     'facility':['auth', 'authpriv', 'cron', 'daemon', 'ftp', 'kern', 'local0', 'local1', 'local2', 'local3', 'local5', 'local6', 'local7', 'lpr', 'mail', 'news', 'syslog', 'user', 'uucp'],
                     'includeFacility':[ 'include', 'exclude' ],
                     'priority':['emerg', 'alert', 'crit', 'err', 'warning', 'notice', 'info', 'debug'],
@@ -55,7 +55,9 @@ class JSONify():
                     'includeTags':['include', 'exclude'],
                     'includeHosts':['include', 'exclude'],
                     'includeMessage':['include', 'exclude'],
-                    'page':['10', '25', '50', '100', '250', '500', '1000', '2500', '5000']
+                    'page':['10', '25', '50', '100', '250', '500', '1000', '2500', '5000'],
+                    'searchAfter':['on'],
+                    'searchBefore':['on']
                  }
 
     def __init__(self):
@@ -88,11 +90,26 @@ class JSONify():
         key = ''
         value = ''
         for jObjItem in jsonObj:
-            key = jObjItem.keys()[0]
-            value = jObjItem[key]
+            keyUnreliable = jObjItem.keys()[0]
+            key = list(set(self.validation["keys"]).intersection(set([keyUnreliable])))[0]
+            valueUnreliagle = jObjItem[key]
+            if key in self.validation.keys():
+                if type(valueUnreliagle).__name__ == 'list':
+                    value = list(set(self.validation[key]).intersection(set(valueUnreliagle)))
+                    pLog.logger("Validated list type input: %s" % str(value))
+                else:
+                    value = list(set(self.validation[key]).intersection(set([valueUnreliagle])))[0]
+                    pLog.logger("Validated not list type input: %s" % str(value))
+            else:
+                value = jObjItem[key]
+                pLog.logger("Need other validation: %s" % str(value))
+            
+            pLog.logger("jsonDict[%s] = %s" % (key, value))
             jsonDict[key] = value
 
         pLog.logger("In jsonToSQL function jsonDict = %s" % str(jsonDict))
+
+        
 
 if __name__ == "__main__":
     db = DB()
@@ -105,18 +122,18 @@ if __name__ == "__main__":
     pLog.logger("postRawData: " + str(request))
 
     requestKey = request.keys()[0]
+    requestValue = str(request[request.keys()[0]].value)
     pLog.logger("requestKey_0: " + str(requestKey))
 
     if requestKey == 'getForm':
-        requestValue = request.getfirst(requestKey)
         if requestValue == 'hosts':
             response = json.dumps(db.runQuery(conn, 'SELECT * FROM hosts;'))
         elif requestValue == 'tags':
             response = json.dumps(db.runQuery(conn, 'SELECT * FROM tags;'))
         pLog.logger("requestKey: " + requestKey)
         pLog.logger("requestValue: " + requestValue)
-    else:
-        jsonreq = json.loads(requestKey)
+    elif requestKey == 'data':
+        jsonreq = json.loads(requestValue)
         pLog.logger('JSON string: ' + str(jsonreq))
         jObj.jsonToSQL(jsonreq)
         response = json.dumps(db.runQuery(conn, 'SELECT id, concat(datetime) AS datetime, host, facility, priority,  tag, message FROM logs ORDER BY datetime DESC, id DESC LIMIT 25;'))

@@ -30,12 +30,15 @@ function $(element) {
  */
 this.getURL = function() {
     var post = processForm()
+    var timestamp = Number(new Date());
+    var boundary = "LogWalker_" + timestamp
 
     http = new XMLHttpRequest()
     http.open("post", "logwalker.py", true)
-    http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+    //http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
+    http.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundary)
     http.onreadystatechange = responseParser
-    http.send(post)
+    http.send("--" + boundary + "\nContent-Disposition: form-data; name=\"data\"\n\n" + post + "\n--" + boundary + "--\n")
 }
 
 this.responseParser = function() {
@@ -185,7 +188,12 @@ this.processForm = function() {
             } else if ( ( formElements[sF].type == 'radio' || formElements[sF].type == 'checkbox' ) && formElements[sF].checked ) {
                 ret.push( '{"' + formElements[sF].name + '":"' + formElements[sF].value + '"}' )
             } else if ( formElements[sF].type == 'text' && ( formElements[sF].value != '' || formElements[sF].value != undefined ) ) {
-                ret.push( '{"' + formElements[sF].name + '":"' + formElements[sF].value + '"}' )
+                textValue = formElements[sF].value
+                textValue = textValue.replace(/"/g, '&quote;')
+                textValue = textValue.replace(/'/g, "&#39;")
+                textValue = textValue.replace(/>/g, "&gt;")
+                textValue = textValue.replace(/</g, "&lt;")
+                ret.push( '{"' + formElements[sF].name + '":"' + textValue + '"}' )
             } else if ( formElements[sF].type == 'select-one' ) {
                 ret.push( '{"' + formElements[sF].name + '":"' + formElements[sF].value + '"}' )
             }
