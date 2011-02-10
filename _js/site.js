@@ -189,6 +189,9 @@ this.processForm = function() {
                 ret.push( '{"' + formElements[sF].name + '":"' + formElements[sF].value + '"}' )
             } else if ( formElements[sF].type == 'text' && ( formElements[sF].value != '' || formElements[sF].value != undefined ) ) {
                 textValue = formElements[sF].value
+                // Az ampersend: & kigyomlalasa elhagyhato
+                textValue = textValue.replace(/&/g, '&amp;')
+                
                 textValue = textValue.replace(/"/g, '&quote;')
                 textValue = textValue.replace(/'/g, "&#39;")
                 textValue = textValue.replace(/>/g, "&gt;")
