@@ -9,6 +9,8 @@ import MySQLdb
 import syslog
 import json
 import cgi
+import re
+import time
 
 sys.path.append("./")
 from config import Config
@@ -59,6 +61,11 @@ class JSONify():
                     'searchAfter':['on'],
                     'searchBefore':['on']
                  }
+    dateValidation = [ 'before', 'after' ]
+    textValidation = [ 'message' ]
+
+    whereClausePatch = { 'include':'IN', 'exclude': 'NOT IN' }
+    whereClauseMessagePatch = { 'include':'MATCH', 'exclude': 'NOT MATCH' }
 
     def __init__(self):
         db = DB()
@@ -86,30 +93,83 @@ class JSONify():
 
     def jsonToSQL(self,jsonObj):
         pLog = LOG()
-        jsonDict = {}
-        key = ''
-        value = ''
+        jsonDict = dict()
+
+        SELECT = [ "id", "concat(datetime) AS datetime", "host", "facility", "priority",  "tag", "message" ]
+        WHERE = list()
+        ORDER = [ "id DESC" ]
+
         for jObjItem in jsonObj:
+            key = str()
+            value = str()
             keyUnreliable = jObjItem.keys()[0]
             key = list(set(self.validation["keys"]).intersection(set([keyUnreliable])))[0]
-            valueUnreliagle = jObjItem[key]
+            valueUnreliable = jObjItem[key]
             if key in self.validation.keys():
-                if type(valueUnreliagle).__name__ == 'list':
-                    value = list(set(self.validation[key]).intersection(set(valueUnreliagle)))
+                if type(valueUnreliable).__name__ == 'list':
+                    value = list(set(self.validation[key]).intersection(set(valueUnreliable)))
                     pLog.logger("Validated list type input: %s" % str(value))
                 else:
-                    value = list(set(self.validation[key]).intersection(set([valueUnreliagle])))[0]
+                    value = list(set(self.validation[key]).intersection(set([valueUnreliable])))[0]
                     pLog.logger("Validated not list type input: %s" % str(value))
+            elif key in self.dateValidation:
+                if valueUnreliable != '' and self.dateValidation.__contains__(key):
+                    if re.search('^2[0-9]{3}-(0[1-9]|1[012])-([012][0-9]|3[01]) ([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$', valueUnreliable):
+                        value = valueUnreliable
+                    else:
+                        if key == 'after':
+                            value = '1970:01:01 00:00:00'
+                        elif key == 'before':
+                            value = time.strftime('%Y-%m-%d %H:%M:%S')
+                    pLog.logger("Validated date type input: %s" % str(value))
             else:
-                value = jObjItem[key]
                 pLog.logger("Need other validation: %s" % str(value))
+                # A message mezo validalasa hianyzik meg
+                value = valueUnreliable
             
             pLog.logger("jsonDict[%s] = %s" % (key, value))
             jsonDict[key] = value
 
         pLog.logger("In jsonToSQL function jsonDict = %s" % str(jsonDict))
 
-        
+        if len(jsonDict['facility']) > 0:
+            WHERE.append( "`facility` " + self.whereClausePatch[jsonDict['includeFacility']] + "('" + "', '".join(jsonDict['facility']) + "')" )
+
+        if len(jsonDict['priority']) > 0:
+            WHERE.append( "`priority` " + self.whereClausePatch[jsonDict['includePriority']] + "('" + "', '".join(jsonDict['priority']) + "')" )
+
+        if len(jsonDict['hosts']) > 0:
+            WHERE.append( "`host` " + self.whereClausePatch[jsonDict['includeHosts']] + "('" + "', '".join(jsonDict['hosts']) + "')" )
+
+        if len(jsonDict['tags']) > 0:
+            WHERE.append( "`tag` " + self.whereClausePatch[jsonDict['includeTags']] + "('" + "', '".join(jsonDict['tags']) + "')" )
+
+        if jsonDict['message'] != '':
+            WHERE.append( self.whereClauseMessagePatch[jsonDict['includeMessage']] + "(`message`) AGAINST('" + jsonDict['message'] + "' IN BOOLEAN MODE)"  )
+            SELECT.append( "MATCH(`message`) AGAINST('" + jsonDict['message'] + "' IN BOOLEAN MODE) AS score" )
+            ORDER = [ "score DESC" ] + ORDER
+
+        if jsonDict["before"] != '' and ( "searchBefore" in jsonDict.keys() ):
+            WHERE.append( "`datetime` < '" + jsonDict['before'] + "'" )
+
+        if jsonDict["after"] != '' and ( "searchAfter" in jsonDict.keys() ):
+            WHERE.append( " `datetime` > '" + jsonDict["after"] + "'" )
+
+        LIMIT = " LIMIT " + jsonDict['page']
+
+        sqlQuerry = "SELECT " + ( ", ".join(SELECT) ) + " FROM logs"
+
+        if len(WHERE) > 0:
+            sqlQuerry += " WHERE " + " AND ".join(WHERE)
+
+        if len(ORDER) > 0:
+            sqlQuerry += " ORDER BY " + ", ".join(ORDER)
+
+        sqlQuerry += LIMIT + ";"
+
+        pLog.logger( "The querry: " + sqlQuerry )
+
+        return sqlQuerry
 
 if __name__ == "__main__":
     db = DB()
@@ -135,8 +195,8 @@ if __name__ == "__main__":
     elif requestKey == 'data':
         jsonreq = json.loads(requestValue)
         pLog.logger('JSON string: ' + str(jsonreq))
-        jObj.jsonToSQL(jsonreq)
-        response = json.dumps(db.runQuery(conn, 'SELECT id, concat(datetime) AS datetime, host, facility, priority,  tag, message FROM logs ORDER BY datetime DESC, id DESC LIMIT 25;'))
+        sql = jObj.jsonToSQL(jsonreq)
+        response = json.dumps(db.runQuery(conn, sql))
 
     print "Content-Type: text/plain;charset=utf-8\n\n"
 
