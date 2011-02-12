@@ -48,7 +48,6 @@ this.getURL = function() {
     }
     
     http.open("post", "logwalker.py", true)
-    //http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
     http.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundary)
     http.onreadystatechange = responseParser
     http.send("--" + boundary + "\nContent-Disposition: form-data; name=\"data\"\n\n" + post + "\n--" + boundary + "--\n")
@@ -215,16 +214,15 @@ this.processForm = function() {
     var formElements = document.searchform
     for ( var sF = 1; sF < formElements.length; sF++ ) {
         if ( formElements[sF].name !== undefined && formElements[sF].value !== undefined ) {
-            alert("element.name:" + formElements[sF].name + "\nelement.value:" + formElements[sF].value + "\nelement.length:" + formElements[sF].length)
+            //alert("element.name:" + formElements[sF].name + "\nelement.value:" + formElements[sF].value + "\nelement.length:" + formElements[sF].length)
             if ( formElements[sF].type == 'select-multiple' && formElements[sF].options.length > 0 ) {
                 var elements = new Array()
                 for ( var e = 0; e < formElements[sF].options.length; e++ ) {
                     if ( formElements[sF].options[e].selected ) {
-                        alert(formElements[sF].options[e].value)
+                        //alert(formElements[sF].options[e].value)
                         elements.push(formElements[sF].options[e].value)
                     }
                 }
-                //ret.push( '{"' + formElements[sF].name + '":' + elements.toSource() + '}' )
                 ret.push( '{"' + formElements[sF].name + '":' + JSON.stringify(elements) + '}' )
 
             }
