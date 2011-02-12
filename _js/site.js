@@ -1,4 +1,7 @@
 var http = null
+var refreshVol = 15
+var refreshAfter = refreshVol
+var trigger
 
 //
 // TODO:
@@ -25,6 +28,60 @@ function $(element) {
 }
 
 /*
+ * Masodpercenkent csokkenti a refreshAfter erteket
+ * ha nullara csokken meghivja a getURL -t
+ */
+this.timeCicle = function() {
+    if ( refreshAfter > 0 ) {
+        refreshAfter--
+    } else {
+        refreshAfter = refreshVol
+        getURL()
+    }
+
+    $("timer").innerHTML = refreshAfter + " s"
+    trigger = setTimeout("timeCicle();", 1000)
+}
+
+this.incRefreshInterval = function() {
+    if ( refreshVol < 300 ) {
+        if ( refreshVol >= 5 && refreshVol <= 30  ) {
+            refreshVol += 5
+        } else if ( refreshVol > 30 && refreshVol <= 60 ) {
+            refreshVol += 10
+        } else if ( refreshVol > 60 && refreshVol <= 120 ) {
+            refreshVol += 30
+        } else if ( refreshVol > 120 ) {
+            refreshVol += 60
+        }
+    } else {
+        refreshVol = 300
+    }
+
+    refreshAfter = refreshVol
+    $("timer").innerHTML = refreshAfter + " s"
+}
+
+this.decRefreshInterval = function() {
+    if ( refreshVol > 5 ) {
+        if ( refreshVol > 5 && refreshVol <= 30  ) {
+            refreshVol -= 5
+        } else if ( refreshVol > 30 && refreshVol <= 60 ) {
+            refreshVol -= 10
+        } else if ( refreshVol > 60 && refreshVol <= 120 ) {
+            refreshVol -= 30
+        } else if ( refreshVol > 120 ) {
+            refreshVol -= 60
+        }
+    } else {
+        refreshVol = 5
+    }
+
+    refreshAfter = refreshVol
+    $("timer").innerHTML = refreshAfter + " s"
+}
+
+/*
  * Elkeri a servertol a search form
  * eredmenyet
  */
@@ -32,6 +89,10 @@ this.getURL = function() {
     var post = processForm()
     var timestamp = Number(new Date());
     var boundary = "LogWalker_" + timestamp
+
+    if ( trigger ) {
+        clearTimeout(trigger)
+    }
 
     try {
         http = new XMLHttpRequest()
@@ -205,6 +266,12 @@ this.tagsFormResponseParser = function() {
 }
 
 this.formReset = function() {
+    if ( trigger ) {
+        clearTimeout(trigger)
+    }
+
+    refreshAfter = refreshVol
+    $("timer").innerHTML = refreshAfter + " s"
     $('form').reset()
     return true
 }
