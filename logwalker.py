@@ -73,7 +73,7 @@ class JSONify():
         pLog = LOG()
         
         tags = db.runQuery(conn, "SELECT tag FROM tags;")
-        pLog.logger("Tags in JSONify %s" % str(tags))
+        if Config.debug == 1: pLog.logger("Tags in JSONify %s" % str(tags))
         realTags = []
         for tag in tags:
             realTags.append(tag['tag'])
@@ -81,14 +81,14 @@ class JSONify():
         self.validation["tags"] = realTags
         
         hosts = db.runQuery(conn, "SELECT host FROM hosts;")
-        pLog.logger("Hosts in JSONify %s" % str(hosts))
+        if Config.debug == 1: pLog.logger("Hosts in JSONify %s" % str(hosts))
         realHosts = []
         for host in hosts:
             realHosts.append(host['host'])
 
         self.validation["hosts"] = realHosts
 
-        pLog.logger("JSONify.validation = %s" % self.validation)
+        if Config.debug == 1: pLog.logger("JSONify.validation = %s" % self.validation)
 
 
     def jsonToSQL(self,jsonObj):
@@ -108,10 +108,10 @@ class JSONify():
             if key in self.validation.keys():
                 if type(valueUnreliable).__name__ == 'list':
                     value = list(set(self.validation[key]).intersection(set(valueUnreliable)))
-                    pLog.logger("Validated list type input: %s" % str(value))
+                    if Config.debug == 1: pLog.logger("Validated list type input: %s" % str(value))
                 else:
                     value = list(set(self.validation[key]).intersection(set([valueUnreliable])))[0]
-                    pLog.logger("Validated not list type input: %s" % str(value))
+                    if Config.debug == 1: pLog.logger("Validated not list type input: %s" % str(value))
             elif key in self.dateValidation:
                 if valueUnreliable != '' and self.dateValidation.__contains__(key):
                     if re.search('^2[0-9]{3}-(0[1-9]|1[012])-([012][0-9]|3[01]) ([01][0-9]|2[0-3]):[0-5][0-9]:[0-5][0-9]$', valueUnreliable):
@@ -121,16 +121,16 @@ class JSONify():
                             value = '1970:01:01 00:00:00'
                         elif key == 'before':
                             value = time.strftime('%Y-%m-%d %H:%M:%S')
-                    pLog.logger("Validated date type input: %s" % str(value))
+                    if Config.debug == 1: pLog.logger("Validated date type input: %s" % str(value))
             else:
-                pLog.logger("Need other validation: %s" % str(value))
+                if Config.debug == 1: pLog.logger("Need other validation: %s" % str(value))
                 # A message mezo validalasa hianyzik meg
                 value = valueUnreliable
             
-            pLog.logger("jsonDict[%s] = %s" % (key, value))
+            if Config.debug == 1: pLog.logger("jsonDict[%s] = %s" % (key, value))
             jsonDict[key] = value
 
-        pLog.logger("In jsonToSQL function jsonDict = %s" % str(jsonDict))
+        if Config.debug == 1: pLog.logger("In jsonToSQL function jsonDict = %s" % str(jsonDict))
 
         if len(jsonDict['facility']) > 0:
             WHERE.append( "`facility` " + self.whereClausePatch[jsonDict['includeFacility']] + "('" + "', '".join(jsonDict['facility']) + "')" )
@@ -167,7 +167,7 @@ class JSONify():
 
         sqlQuerry += LIMIT + ";"
 
-        pLog.logger( "The querry: " + sqlQuerry )
+        if Config.debug == 1: pLog.logger( "The querry: " + sqlQuerry )
 
         return sqlQuerry
 
@@ -179,22 +179,22 @@ if __name__ == "__main__":
     response = ''
 
     request = cgi.FieldStorage(keep_blank_values=True)
-    pLog.logger("postRawData: " + str(request))
+    if Config.debug == 1: pLog.logger("postRawData: " + str(request))
 
     requestKey = request.keys()[0]
     requestValue = str(request[request.keys()[0]].value)
-    pLog.logger("requestKey_0: " + str(requestKey))
+    if Config.debug == 1: pLog.logger("requestKey_0: " + str(requestKey))
 
     if requestKey == 'getForm':
         if requestValue == 'hosts':
             response = json.dumps(db.runQuery(conn, 'SELECT * FROM hosts;'))
         elif requestValue == 'tags':
             response = json.dumps(db.runQuery(conn, 'SELECT * FROM tags;'))
-        pLog.logger("requestKey: " + requestKey)
-        pLog.logger("requestValue: " + requestValue)
+        if Config.debug == 1: pLog.logger("requestKey: " + requestKey)
+        if Config.debug == 1: pLog.logger("requestValue: " + requestValue)
     elif requestKey == 'data':
         jsonreq = json.loads(requestValue)
-        pLog.logger('JSON string: ' + str(jsonreq))
+        if Config.debug == 1: pLog.logger('JSON string: ' + str(jsonreq))
         sql = jObj.jsonToSQL(jsonreq)
         response = json.dumps(db.runQuery(conn, sql))
 
