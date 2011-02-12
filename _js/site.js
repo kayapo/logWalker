@@ -33,7 +33,20 @@ this.getURL = function() {
     var timestamp = Number(new Date());
     var boundary = "LogWalker_" + timestamp
 
-    http = new XMLHttpRequest()
+    try {
+        http = new XMLHttpRequest()
+    } catch(e) {
+        try {
+            http = new ActiveXObject("Msxml2.XMLHTTP")
+        } catch (e) {
+            try {
+                http = new ActiveXObject("Microsoft.XMLHTTP")
+            } catch (e) {
+                throw "XML HTTP Request not supported"
+            }
+        }
+    }
+    
     http.open("post", "logwalker.py", true)
     //http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
     http.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundary)
@@ -122,7 +135,20 @@ this.loadForm = function() {
 }
 
 this.loadHosts = function() {
-    http = new XMLHttpRequest()
+    try {
+        http = new XMLHttpRequest()
+    } catch(e) {
+        try {
+            http = new ActiveXObject("Msxml2.XMLHTTP")
+        } catch (e) {
+            try {
+                http = new ActiveXObject("Microsoft.XMLHTTP")
+            } catch (e) {
+                throw "XML HTTP Request not supported"
+            }
+        }
+    }
+
     http.open("get", "logwalker.py?getForm=hosts", true)
     http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
     http.onreadystatechange = hostsFormResponseParser
@@ -130,7 +156,20 @@ this.loadHosts = function() {
 }
 
 this.loadTags = function() {
-    http = new XMLHttpRequest()
+    try {
+        http = new XMLHttpRequest()
+    } catch(e) {
+        try {
+            http = new ActiveXObject("Msxml2.XMLHTTP")
+        } catch (e) {
+            try {
+                http = new ActiveXObject("Microsoft.XMLHTTP")
+            } catch (e) {
+                throw "XML HTTP Request not supported"
+            }
+        }
+    }
+
     http.open("get", "logwalker.py?getForm=tags", true)
     http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
     http.onreadystatechange = tagsFormResponseParser
@@ -153,6 +192,7 @@ this.hostsFormResponseParser = function() {
 
 this.tagsFormResponseParser = function() {
     var tags = http.responseText
+    //alert(tags)
     if ( !tags ) return
     var jsonParsedObject = JSON.parse(tags, reviver)
     var tagFieldSet = '<legend>Tags</legend><select size="7" multiple name="tags">'
@@ -171,23 +211,27 @@ this.formReset = function() {
 }
 
 this.processForm = function() {
-    var ret = Array()
+    var ret = new Array()
     var formElements = document.searchform
     for ( var sF = 1; sF < formElements.length; sF++ ) {
         if ( formElements[sF].name !== undefined && formElements[sF].value !== undefined ) {
-            //alert(formElements[sF].name + " " + formElements[sF].value + " " + formElements[sF].type)
+            alert("element.name:" + formElements[sF].name + "\nelement.value:" + formElements[sF].value + "\nelement.length:" + formElements[sF].length)
             if ( formElements[sF].type == 'select-multiple' && formElements[sF].options.length > 0 ) {
-                var elements = Array()
+                var elements = new Array()
                 for ( var e = 0; e < formElements[sF].options.length; e++ ) {
                     if ( formElements[sF].options[e].selected ) {
-                        // alert(formElements[sF].options[e].value)
+                        alert(formElements[sF].options[e].value)
                         elements.push(formElements[sF].options[e].value)
                     }
                 }
-                ret.push( '{"' + formElements[sF].name + '":' + elements.toSource() + '}' )
-            } else if ( ( formElements[sF].type == 'radio' || formElements[sF].type == 'checkbox' ) && formElements[sF].checked ) {
+                //ret.push( '{"' + formElements[sF].name + '":' + elements.toSource() + '}' )
+                ret.push( '{"' + formElements[sF].name + '":' + JSON.stringify(elements) + '}' )
+
+            }
+            else if ( ( formElements[sF].type == 'radio' || formElements[sF].type == 'checkbox' ) && formElements[sF].checked ) {
                 ret.push( '{"' + formElements[sF].name + '":"' + formElements[sF].value + '"}' )
-            } else if ( formElements[sF].type == 'text' && ( formElements[sF].value != '' || formElements[sF].value != undefined ) ) {
+            }
+            else if ( formElements[sF].type == 'text' && ( formElements[sF].value != '' || formElements[sF].value != undefined ) ) {
                 textValue = formElements[sF].value
                 // Az ampersend: & kigyomlalasa elhagyhato
                 textValue = textValue.replace(/&/g, '&amp;')
@@ -196,6 +240,7 @@ this.processForm = function() {
                 textValue = textValue.replace(/'/g, "&#39;")
                 textValue = textValue.replace(/>/g, "&gt;")
                 textValue = textValue.replace(/</g, "&lt;")
+
                 ret.push( '{"' + formElements[sF].name + '":"' + textValue + '"}' )
             } else if ( formElements[sF].type == 'select-one' ) {
                 ret.push( '{"' + formElements[sF].name + '":"' + formElements[sF].value + '"}' )
