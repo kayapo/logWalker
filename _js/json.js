@@ -1,6 +1,5 @@
-/*
- * This code located on: http://www.json.org/js.html
- */
+// Create a JSON object only if one does not already exist. We create the
+// methods in a closure to avoid creating global variables.
 
 var JSON;
 if (!JSON) {
@@ -318,19 +317,6 @@ if (!JSON) {
 // If the text is not JSON parseable, then a SyntaxError is thrown.
 
             throw new SyntaxError('JSON.parse');
-        };
-    }
-
-// Augment the basic prototypes if they have not already been augmented.
-// These forms are obsolete. It is recommended that JSON.stringify and
-// JSON.parse be used instead.
-
-    if (!Object.prototype.toJSONString) {
-        Object.prototype.toJSONString = function (filter) {
-            return JSON.stringify(this, filter);
-        };
-        Object.prototype.parseJSON = function (filter) {
-            return JSON.parse(this, filter);
         };
     }
 }());
