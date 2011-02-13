@@ -1,6 +1,31 @@
-README
+LogWalker is a tool for view log lines, if syslog logging set to send messages
+to MySQL database.
 
-It's empty :(
+IMPORTANT::
 
-Grrr.....
+  Currently, the logwalker might contain security weaknesses. Use at your own
+  risk!
 
+GET THE CODE::
+
+  git clone https://github.com/kayapo/logWalker.git
+
+INSTALL::
+
+  1. Prepare database, use tables.sql
+     mysql -u root -h sqldbhost -p < tables.sql
+
+  2. Set virtual host on webserver
+
+  3. Set DB connection in config.py
+
+  4. Configure Syslog-NG
+
+USE::
+
+  Open your browser (read the KNOWN ISSUES section) amd point to location of
+  logwalker (http://your.vhost.domain.tld/index.html)
+
+KNOWN ISSUES:
+
+  At this time logwalker not running on Safari browsers.
