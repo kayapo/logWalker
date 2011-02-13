@@ -15,6 +15,10 @@ import time
 sys.path.append("./")
 from config import Config
 
+if Config.debug == 1:
+    import cgitb
+    cgitb.enable()
+
 class LOG():
     def logger(self, msg):
         syslog.openlog('logWalker', 0, 23)
@@ -176,28 +180,35 @@ if __name__ == "__main__":
     conn = db.connector('syslog')
     jObj = JSONify()
     pLog = LOG()
-    response = ''
+    response = "Cache-Control: no-cache\nPragma: no-cache\nExpires: 0\nContent-Type: text/plain;charset=utf-8\n\n"
 
     request = cgi.FieldStorage(keep_blank_values=True)
     if Config.debug == 1: pLog.logger("postRawData: " + str(request))
 
-    requestKey = request.keys()[0]
-    requestValue = str(request[request.keys()[0]].value)
+    try:
+        requestKey = request.keys()[0]
+        requestValue = str(request[request.keys()[0]].value)
+    except IndexError, e:
+        pLog.logger("Error: %s" % e.args[0])
+        requestKey = ''
+
     if Config.debug == 1: pLog.logger("requestKey_0: " + str(requestKey))
 
     if requestKey == 'getForm':
         if requestValue == 'hosts':
-            response = json.dumps(db.runQuery(conn, 'SELECT * FROM hosts;'))
+            response += json.dumps(db.runQuery(conn, 'SELECT * FROM hosts;'))
         elif requestValue == 'tags':
-            response = json.dumps(db.runQuery(conn, 'SELECT * FROM tags;'))
+            response += json.dumps(db.runQuery(conn, 'SELECT * FROM tags;'))
         if Config.debug == 1: pLog.logger("requestKey: " + requestKey)
         if Config.debug == 1: pLog.logger("requestValue: " + requestValue)
     elif requestKey == 'data':
         jsonreq = json.loads(requestValue)
         if Config.debug == 1: pLog.logger('JSON string: ' + str(jsonreq))
         sql = jObj.jsonToSQL(jsonreq)
-        response = json.dumps(db.runQuery(conn, sql))
+        response += json.dumps(db.runQuery(conn, sql))
+    elif requestKey == '':
+        response = "Status: 301 Permanently moved\nLocation: /index.html\n"
 
-    print "Content-Type: text/plain;charset=utf-8\n\n"
+    #print "Content-Type: text/plain;charset=utf-8\n\n"
 
     print response
