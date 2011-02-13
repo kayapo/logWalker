@@ -1,5 +1,14 @@
+-- create syslog database
+-- Use:
+--     mysql -u root -h sqldbhost -p < tables.sql
+--
+--
+
+CREATE DATABASE IF NOT EXSISTS syslog DEFAULT CHARACTEr SET=utf8 DEFAULT COLLATE=utf8_general_ci;
+USE syslog;
+
 -- create table named logs
-CREATE TABLE `logs` (
+CREATE TABLE IF NOT EXISTS `logs` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `datetime` datetime DEFAULT NULL,
   `host` varchar(255) DEFAULT NULL,
@@ -15,16 +24,21 @@ CREATE TABLE `logs` (
   FULLTEXT KEY `idx_msg` (`message`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 DEFAULT COLLATE=utf8_general_ci CHECKSUM=1;
 
-CREATE TABLE `hosts` (
+
+-- create table named hosts
+CREATE TABLE IF NOT EXISTS `hosts` (
   `id` int(4) unsigned NOT NULL AUTO_INCREMENT,
   `host` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_host` (`host`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 CHECKSUM=1;
 
-CREATE TABLE `tags` (
+-- create table named tags
+CREATE TABLE `tags` IF NOT EXISTS (
   `id` int(4) unsigned NOT NULL AUTO_INCREMENT,
   `tag` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_tag` (`tag`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 CHECKSUM=1;
+
+-- Create script END ;)
