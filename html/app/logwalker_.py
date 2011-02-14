@@ -208,6 +208,9 @@ if __name__ == "__main__":
         response += json.dumps(db.runQuery(conn, sql))
     elif requestKey == '':
         response = "Status: 301 Permanently moved\nLocation: /index.html\n"
+    else:
+        response += '[{"facility": "user", "datetime": "%s", "priority": "err", "host": "", "tag": "logwalker", "message": "Request error!!!", "id": 1}]' % (time.strftime('%Y-%m-%d %H:%M:%S'))
+
 
     #print "Content-Type: text/plain;charset=utf-8\n\n"
 

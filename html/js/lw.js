@@ -108,7 +108,7 @@ this.getURL = function() {
         }
     }
     
-    http.open("post", "logwalker.py", true)
+    http.open("post", "app/logwalker.py", true)
     http.setRequestHeader("Content-Type", "multipart/form-data; boundary=" + boundary)
     http.onreadystatechange = responseParser
     http.send("--" + boundary + "\nContent-Disposition: form-data; name=\"data\"\n\n" + post + "\n--" + boundary + "--\n")
@@ -209,7 +209,7 @@ this.loadHosts = function() {
         }
     }
 
-    http.open("get", "logwalker.py?getForm=hosts", true)
+    http.open("get", "app/logwalker.py?getForm=hosts", true)
     http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
     http.onreadystatechange = hostsFormResponseParser
     http.send(null)
@@ -230,7 +230,7 @@ this.loadTags = function() {
         }
     }
 
-    http.open("get", "logwalker.py?getForm=tags", true)
+    http.open("get", "app/logwalker.py?getForm=tags", true)
     http.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
     http.onreadystatechange = tagsFormResponseParser
     http.send(null)
