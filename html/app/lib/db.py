@@ -5,9 +5,9 @@ import MySQLdb
 import sys
 sys.path.append("./")
 
-from log import LOG
+from log import *
 
-class DB():
+class db():
     """
     Database connection class
     hostname = str(), username = str(), password = str(), databes = str()
@@ -38,23 +38,23 @@ class DB():
         try:
             conn = MySQLdb.connect(host = self.hostname, user = self.username, passwd = self.password, db = self.database)
         except MySQLdb.Error, e:
-            message = "Error in DB.connector(): %d, %s" % (e.args[0], e.args[1])
-            mLog = LOG(0,7,"logwalker.lib.DB.connector")
+            message = "Error in db.connector(): %d, %s" % (e.args[0], e.args[1])
+            mLog = log(0,7,"logwalker.lib.db.connector")
             mLog.logger(message)
             return -1
         else:
             return conn
 
-    def runQuerry(self, connect, querry):
+    def runQuery(self, connect, querry):
         """Run MySQL querry on selected database"""
 
         try:
             cursor = connect.cursor(MySQLdb.cursors.DictCursor)
             cursor.execute(querry)
             resoult_set = cursor.fetchall()
-        except:
-            message = "Error in DB.runQuerry(): %d, %s" % (e.args[0], e.args[1])
-            mLog = LOG(0,7,"logwalker.lib.DB.connector")
+        except MySQLdb.Error, e:
+            message = "Error in db.runQuery(): %d, %s" % (e.args[0], e.args[1])
+            mLog = log(0,7,"logwalker.lib.db.connector")
             mLog.logger(message)
             return -1
         else:
