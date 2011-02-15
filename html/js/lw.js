@@ -45,13 +45,13 @@ this.timeCicle = function() {
 
 this.incRefreshInterval = function() {
     if ( refreshVol < 300 ) {
-        if ( refreshVol >= 5 && refreshVol <= 30  ) {
+        if ( refreshVol >= 5 && refreshVol < 30  ) {
             refreshVol += 5
-        } else if ( refreshVol > 30 && refreshVol <= 60 ) {
+        } else if ( refreshVol >= 30 && refreshVol < 60 ) {
             refreshVol += 10
-        } else if ( refreshVol > 60 && refreshVol <= 120 ) {
+        } else if ( refreshVol >= 60 && refreshVol < 120 ) {
             refreshVol += 30
-        } else if ( refreshVol > 120 ) {
+        } else if ( refreshVol >= 120 ) {
             refreshVol += 60
         }
     } else {
