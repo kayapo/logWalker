@@ -8,16 +8,16 @@ import time
 
 import sys
 sys.path.append("../html/app/lib/")
-sys.path.append("../html/conf/")
+sys.path.append("../html/app/conf/")
 
-from log import LOG
-from db import DB
-from config import Config
-from jsonify import JSONify
+from log import log
+from db import db
+from JSONify import JSONify
+from Config import Config
 
-class  LOGTestCase(unittest.TestCase):
+class  logTestCase(unittest.TestCase):
     def setUp(self):
-        self.logObj = LOG(0,0,"syslogTestCase.python.logwalker")
+        self.logObj = log(0,0,"syslogTestCase.python.logwalker")
         self.logStamp = ''.join(random.choice(string.ascii_uppercase + string.digits) for x in range(8))
 
     def test_logger(self):
@@ -33,17 +33,17 @@ class  LOGTestCase(unittest.TestCase):
                 ret = 1
         return ret
 
-class DBTestCase(unittest.TestCase):
+class dbTestCase(unittest.TestCase):
     def setUp(self):
-        self.dbObj = DB(Config.MySQLconnector["host"], Config.MySQLconnector["user"], Config.MySQLconnector["password"], "information_schema")
+        self.dbObj = db(Config.MySQLconnector["host"], Config.MySQLconnector["user"], Config.MySQLconnector["password"], "information_schema")
 
     def test_connector(self):
-        self.assertEqual(type(self.dbObj.connector()).__name__, 'Connection', "MySQL DB connection not created")
+        self.assertEqual(type(self.dbObj.connector()).__name__, 'Connection', "MySQL db connection not created")
 
-    def test_runQuerry(self):
+    def test_runQuery(self):
         c = self.dbObj.connector()
-        r = self.dbObj.runQuerry(c, "SELECT 'bar' AS foo;")
-        self.assertEquals(r[0]['foo'], 'bar', "MySQL DB querry failed")
+        r = self.dbObj.runQuery(c, "SELECT 'bar' AS foo;")
+        self.assertEquals(r[0]['foo'], 'bar', "MySQL db query failed")
 
 class JSONifyTestCase(unittest.TestCase):
     def setUp(self):
