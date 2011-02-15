@@ -34,7 +34,7 @@ CREATE TABLE IF NOT EXISTS `hosts` (
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 CHECKSUM=1;
 
 -- create table named tags
-CREATE TABLE `tags` IF NOT EXISTS (
+CREATE TABLE IF NOT EXISTS `tags` (
   `id` int(4) unsigned NOT NULL AUTO_INCREMENT,
   `tag` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`),
