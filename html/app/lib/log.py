@@ -3,7 +3,7 @@ __date__ ="$2011.02.14. 7:47:29$"
 
 import syslog
 
-class LOG():
+class log():
     """
     Send log messages to syslog
     syslogtag = str(), facility = int(), priority = int(), message = str()
