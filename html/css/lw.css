@@ -95,6 +95,13 @@ li {
     vertical-align: middle;
 }
 
+#timer {
+    display: inline-block;
+    width: 40px;
+    padding: 0 5px;
+    text-align: right;
+}
+
 /*    -=: HEADER :=-    */
 
 #table-top {

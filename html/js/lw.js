@@ -43,6 +43,11 @@ this.timeCicle = function() {
     trigger = setTimeout("timeCicle();", 1000)
 }
 
+/*
+ * Inicializalja a refreshVol erteket,
+ * noveli az erteket a pillanatnyi
+ * szamtol fuggoen
+ */
 this.incRefreshInterval = function() {
     if ( refreshVol < 300 ) {
         if ( refreshVol >= 5 && refreshVol < 30  ) {
@@ -59,9 +64,14 @@ this.incRefreshInterval = function() {
     }
 
     refreshAfter = refreshVol
-    $("timer").innerHTML = refreshAfter + " s"
+    $("timer").innerHTML = refreshAfter + "s"
 }
 
+/*
+ * Inicializalja a refreshVol erteket,
+ * csokkenti az erteket a pillanatnyi
+ * szamtol fuggoen
+ */
 this.decRefreshInterval = function() {
     if ( refreshVol > 5 ) {
         if ( refreshVol > 5 && refreshVol <= 30  ) {
@@ -78,7 +88,7 @@ this.decRefreshInterval = function() {
     }
 
     refreshAfter = refreshVol
-    $("timer").innerHTML = refreshAfter + " s"
+    $("timer").innerHTML = refreshAfter + "s"
 }
 
 /*
@@ -271,7 +281,7 @@ this.formReset = function() {
     }
 
     refreshAfter = refreshVol
-    $("timer").innerHTML = refreshAfter + " s"
+    $("timer").innerHTML = refreshAfter + "s"
     $('form').reset()
     return true
 }
