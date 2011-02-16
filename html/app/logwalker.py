@@ -5,16 +5,19 @@ __date__ ="$2011.02.14. 12:22:35$"
 
 
 import cgi
-import cgitb
-cgitb.enable()
 
 import json
 import time
+import re
 
 from lib.log import log
 from lib.db import db
 from conf.Config import Config
 from lib.JSONify import JSONify
+
+#if Config.debug == 1:
+#    import cgitb
+#    cgitb.enable()
 
 def getTags():
     tags = list()
@@ -74,15 +77,11 @@ def requestReformat(request):
         for element in request:
             key = element.keys()[0]
             value = element[key]
-            L.logger('%s => %s' % (key, str(value)))
+            if Config.debug == 1: L.logger('%s => %s' % (key, str(value)))
 
             reformated[key] = value
 
     return reformated
-
-def main():
-
-    return
 
 if __name__ == "__main__":
     L = log(0, 7, "logwalker.main")
@@ -96,6 +95,7 @@ if __name__ == "__main__":
     try:
         requestKey = request.keys()[0]
         requestValue = str(request[request.keys()[0]].value)
+        requestValue = re.sub("[\n\r]", " ", requestValue)
     except IndexError, e:
         L.logger("Error: %s" % e.args[0])
         requestKey = ''
@@ -110,6 +110,8 @@ if __name__ == "__main__":
             L.logger("requestValue = " + requestValue)
 
     elif requestKey == 'data':
+
+
         jsonreq = json.loads(requestValue)
         if Config.debug == 1: L.logger('JSON string = ' + str(jsonreq))
 
@@ -120,6 +122,7 @@ if __name__ == "__main__":
         
         validatedRequest = J.validityCheck(reformatedRequest)
 
+        if Config.debug == 1: L.logger("sql Query = " + J.objectToSQL(reformatedRequest))
         sql = J.objectToSQL(reformatedRequest)
         dbConn = D.connector()
 
