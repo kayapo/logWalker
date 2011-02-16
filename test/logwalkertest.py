@@ -97,21 +97,10 @@ class JSONifyTestCase(unittest.TestCase):
                 "after":"2011-01-01 10:00:00",
                 "page":"50"}
 
-        rObj = {"facility":['auth', 'authpriv'],
-                "includeFacility":"include",
-                "priority":['debug', 'info', 'notice'],
-                "includePriority":"include",
-                "includeHosts":"include",
-                "includeTags":"include",
-                "message":"loged in",
-                "includeMessage":"include",
-                "before":"2011-02-01 10:00:00",
-                "after":"2011-01-01 10:00:00",
-                "page":"50"}
-
         qObj = self.jsonObj.validityCheck(tObj)
 
-        self.assertTrue(set(rObj).intersection(set(qObj)), "JSON object validity unclean facility check failed!")
+        self.assertEquals(qObj["facility"], ['authpriv', 'auth'], "JSON object validity unclean facility check failed!")
+
 
     def test_validityCheckUnCleanPriority(self):
         tObj = {"facility":['auth', 'authpriv'],
@@ -126,21 +115,9 @@ class JSONifyTestCase(unittest.TestCase):
                 "after":"2011-01-01 10:00:00",
                 "page":"50"}
 
-        rObj = {"facility":['auth', 'authpriv'],
-                "includeFacility":"include",
-                "priority":['debug', 'info', 'notice'],
-                "includePriority":"include",
-                "includeHosts":"include",
-                "includeTags":"include",
-                "message":"loged in",
-                "includeMessage":"include",
-                "before":"2011-02-01 10:00:00",
-                "after":"2011-01-01 10:00:00",
-                "page":"50"}
-
         qObj = self.jsonObj.validityCheck(tObj)
 
-        self.assertTrue(set(rObj).intersection(set(qObj)), "JSON object validity unclean priority check failed!")
+        self.assertEquals(qObj["priority"], ['debug', 'info', 'notice'], "JSON object validity unclean priority check failed!")
 
     def test_validityCheckUnCleanIncludePriority(self):
         tObj = {"facility":['auth', 'authpriv'],
@@ -155,21 +132,9 @@ class JSONifyTestCase(unittest.TestCase):
                 "after":"2011-01-01 10:00:00",
                 "page":"50"}
 
-        rObj = {"facility":['auth', 'authpriv'],
-                "includeFacility":"include",
-                "priority":['debug', 'info', 'notice'],
-                "includePriority":"include",
-                "includeHosts":"include",
-                "includeTags":"include",
-                "message":"loged in",
-                "includeMessage":"include",
-                "before":"2011-02-01 10:00:00",
-                "after":"2011-01-01 10:00:00",
-                "page":"50"}
-
         qObj = self.jsonObj.validityCheck(tObj)
 
-        self.assertTrue(set(rObj).intersection(set(qObj)), "JSON object validity unclean priority check failed!")
+        self.assertEquals(qObj["includePriority"], [], "JSON object validity unclean priority check failed!")
 
     def test_validityCheckUnCleanBefore(self):
         tObj = {"facility":['auth', 'authpriv'],
@@ -184,21 +149,9 @@ class JSONifyTestCase(unittest.TestCase):
                 "after":"2011-01-01 10:00:00",
                 "page":"50"}
 
-        rObj = {"facility":['auth', 'authpriv'],
-                "includeFacility":"include",
-                "priority":['debug', 'info', 'notice'],
-                "includePriority":"include",
-                "includeHosts":"include",
-                "includeTags":"include",
-                "message":"loged in",
-                "includeMessage":"include",
-                "before":(time.strftime('%Y-%m-%d %H:%M:%S')),
-                "after":"2011-01-01 10:00:00",
-                "page":"50"}
-
         qObj = self.jsonObj.validityCheck(tObj)
 
-        self.assertTrue(set(rObj).intersection(set(qObj)), "JSON object validity unclean before check failed!")
+        self.assertEquals(qObj["before"], (time.strftime('%Y-%m-%d %H:%M:%S')), "JSON object validity unclean before check failed!")
 
     def test_validityCheckUnCleanAfter(self):
         tObj = {"facility":['auth', 'authpriv'],
@@ -213,21 +166,43 @@ class JSONifyTestCase(unittest.TestCase):
                 "after":"UNCLEAN",
                 "page":"50"}
 
-        rObj = {"facility":['auth', 'authpriv'],
+        qObj = self.jsonObj.validityCheck(tObj)
+
+        self.assertEquals(qObj["after"], "1970:01:01 00:00:00", "JSON object validity unclean after check failed!")
+
+    def test_validityCheckCleanMessage_1(self):
+        test = 0
+        tObj = {"facility":['auth', 'authpriv'],
                 "includeFacility":"include",
                 "priority":['debug', 'info', 'notice'],
                 "includePriority":"include",
                 "includeHosts":"include",
                 "includeTags":"include",
-                "message":"loged in",
+                "message":"' SELECT * FROM tags; -- ",
                 "includeMessage":"include",
                 "before":"2011-02-01 10:00:00",
-                "after":"1970:01:01 00:00:00",
+                "after":"2011-01-01 10:00:00",
                 "page":"50"}
 
         qObj = self.jsonObj.validityCheck(tObj)
+        self.assertEquals(qObj["message"], r"\' SELECT * FROM tags\; \-\- ", "JSON object validity unclean message_1 failed!")
 
-        self.assertTrue(set(rObj).intersection(set(qObj)), "JSON object validity unclean after check failed!")
+    def test_validityCheckCleanMessage_2(self):
+        test = 0
+        tObj = {"facility":['auth', 'authpriv'],
+                "includeFacility":"include",
+                "priority":['debug', 'info', 'notice'],
+                "includePriority":"include",
+                "includeHosts":"include",
+                "includeTags":"include",
+                "message":"\' SELECT * FROM tags; -- ",
+                "includeMessage":"include",
+                "before":"2011-02-01 10:00:00",
+                "after":"2011-01-01 10:00:00",
+                "page":"50"}
+
+        qObj = self.jsonObj.validityCheck(tObj)
+        self.assertEquals(qObj["message"], r"\' SELECT * FROM tags\; \-\- ", "JSON object validity unclean message_1 failed!")
 
 if __name__ == '__main__':
     unittest.main()
