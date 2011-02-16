@@ -4,6 +4,11 @@ __date__ ="$2011.02.14. 13:02:43$"
 import re
 import time
 
+import sys
+sys.path.append("./")
+
+from log import *
+
 class JSONify():
     """JSON object conrezation"""
 
@@ -85,6 +90,7 @@ class JSONify():
         are input parameter
         """
         validatedJSONDict = dict()
+        L = log(0,7,"logwalker.lib.JSONify.validityCheck")
 
         for unreliableKey in unreliableJSONDict.keys():
             key = str()
@@ -107,9 +113,11 @@ class JSONify():
                             elif key == 'before':
                                 value = time.strftime('%Y-%m-%d %H:%M:%S')
                 else:
-                    # text message validation
-                    value = valueUnreliable
-
+                    # Wow, it is unbelievable:
+                    valueUnreliable = re.sub(re.escape("\\"), "\\\\", r"%s" % valueUnreliable)
+                    value = re.sub("""([/|&{}#@^~'";-])""", lambda m: "\%s" % m.group(1), r"%s" % valueUnreliable)
+                    L.logger('value = ' + value)
+                    
                 validatedJSONDict[key] = value
 
         return validatedJSONDict

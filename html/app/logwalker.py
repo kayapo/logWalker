@@ -126,7 +126,7 @@ if __name__ == "__main__":
         sql = J.objectToSQL(reformatedRequest)
         dbConn = D.connector()
 
-        response += json.dumps(D.runQuery(dbConn, sql))
+        response += json.dumps(D.runQuery(dbConn, r"%s" % sql))
 
     elif requestKey == '':
         response = "Status: 301 Permanently moved\nLocation: /index.html\n"
