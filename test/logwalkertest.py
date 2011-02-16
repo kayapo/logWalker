@@ -171,7 +171,6 @@ class JSONifyTestCase(unittest.TestCase):
         self.assertEquals(qObj["after"], "1970:01:01 00:00:00", "JSON object validity unclean after check failed!")
 
     def test_validityCheckCleanMessage_1(self):
-        test = 0
         tObj = {"facility":['auth', 'authpriv'],
                 "includeFacility":"include",
                 "priority":['debug', 'info', 'notice'],
@@ -188,7 +187,6 @@ class JSONifyTestCase(unittest.TestCase):
         self.assertEquals(qObj["message"], r"\' SELECT * FROM tags\; \-\- ", "JSON object validity unclean message_1 failed!")
 
     def test_validityCheckCleanMessage_2(self):
-        test = 0
         tObj = {"facility":['auth', 'authpriv'],
                 "includeFacility":"include",
                 "priority":['debug', 'info', 'notice'],
