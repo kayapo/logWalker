@@ -310,7 +310,8 @@ this.processForm = function() {
                 textValue = formElements[sF].value
                 // Az ampersend: & kigyomlalasa elhagyhato
                 textValue = textValue.replace(/&/g, '&amp;')
-                
+
+                textValue = textValue.replace(/\\/g, '\\\\')
                 textValue = textValue.replace(/"/g, '&quote;')
                 textValue = textValue.replace(/'/g, "&#39;")
                 textValue = textValue.replace(/>/g, "&gt;")
