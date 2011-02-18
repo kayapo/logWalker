@@ -8,7 +8,7 @@ IMPORTANT::
 
 GET THE CODE::
 
-  git clone https://github.com/kayapo/logWalker.git
+  wget https://github.com/kayapo/logWalker/zipball/v0.1-RC2
 
 INSTALL::
 
