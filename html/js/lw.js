@@ -162,7 +162,11 @@ this.parse = function(jsontext) {
             line += '<div class="host" title="' + jsonLine.host + '">' + jsonLine.host + '</div>'
             line += '<div class="level">' + jsonLine.facility + '.' + jsonLine.priority + '</div>'
             line += '<div class="tag">' + jsonLine.tag + '</div>'
-            line += '<div class="message" title="' + jsonLine.message + '">' + jsonLine.message + '</div></div></div>'
+            var messageTitle = jsonLine.message
+            messageTitle = messageTitle.replace(/<[^<>]*\/*>/g, '')
+            messageTitle = messageTitle.replace(/"/g, "&quote;")
+            messageTitle = messageTitle.replace(/'/g, "&#39;")
+            line += '<div class="message" title="' + messageTitle + '">' + jsonLine.message + '</div></div></div>'
 
             if ( lineStyle == 'dark' ) {
                 lineStyle = 'light'

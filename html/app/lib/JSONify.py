@@ -123,3 +123,16 @@ class JSONify():
 
         return validatedJSONDict
 
+    def messageClean(self,msg):
+        """Cleanup <script></script> tags from message"""
+        retMsg = ()
+        for mLine in msg:
+            mLine["message"] = re.sub("<(script[^<>]*/*)>", lambda m: "&lt;%s&gt;" % m.group(1), r"%s" % mLine["message"])
+            mLine["message"] = re.sub("<(link[^<>]*/*)>", lambda m: "&lt;%s&gt;" % m.group(1), r"%s" % mLine["message"])
+            mLine["message"] = re.sub("</script>", "&lt;/script&gt;", r"%s" % mLine["message"])
+            mLine["message"] = re.sub("</link>", "&lt;/script&gt;", r"%s" % mLine["message"])
+            mLine["message"] = re.sub("<%=(.*)%>", lambda m: r"&nbsp;&nbsp;&nbsp;<a href='%s' target='_blank'><img src='imgs/view.png' width='16' height='14' border='0' alt='view message' /></a>" % m.group(1), r"%s" % mLine["message"])
+
+            retMsg += (mLine,)
+
+        return retMsg

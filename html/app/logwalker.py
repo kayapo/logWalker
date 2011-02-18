@@ -123,8 +123,10 @@ if __name__ == "__main__":
 
         if SET.getLogLevel() >= 5: L.logger("sql Query = " + J.objectToSQL(reformatedRequest))
         sql = J.objectToSQL(reformatedRequest)
+        sqlResult = dbObj.runQuery(dbConn, sql)
 
-        response += json.dumps(dbObj.runQuery(dbConn, sql))
+        response += json.dumps(J.messageClean(sqlResult))
+        L.logger(response)
 
     elif requestKey == '':
         response = "Status: 301 Permanently moved\nLocation: /index.html\n"

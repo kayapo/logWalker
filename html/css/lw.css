@@ -274,6 +274,12 @@ li {
     overflow: hidden;
     border-left: 1px dotted darkgray;
     white-space: nowrap;
+    vertical-align: middle;
+}
+
+#resoults .message img {
+    vertical-align: middle;
+    border: 0;
 }
 
 /* -=: LOGLINE BACKGROUND COLORING :=-    */
