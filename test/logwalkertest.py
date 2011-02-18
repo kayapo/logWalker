@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import unittest
 
@@ -14,6 +15,7 @@ from log import log
 from db import db
 from JSONify import JSONify
 from Config import Config
+from setup import setup
 
 class  logTestCase(unittest.TestCase):
     def setUp(self):
@@ -201,6 +203,27 @@ class JSONifyTestCase(unittest.TestCase):
 
         qObj = self.jsonObj.validityCheck(tObj)
         self.assertEquals(qObj["message"], r"\' SELECT * FROM tags\; \-\- ", "JSON object validity unclean message_1 failed!")
+
+class setupTestCase(unittest.TestCase):
+    def setUp(self):
+        self.set = setup()
+
+    def test_identifiString_good(self):
+        formatStrings = ["logs_%a", "logs_%A", "logs_%b", "logs_%B",
+                         "logs_%d", "logs_%H", "logs_%I", "logs_%j", "logs_%m",
+                         "logs_%M", "logs_%p", "logs_%S", "logs_%U", "logs_%w",
+                         "logs_%W", "logs_%y", "logs_%Y",
+                         "logs_%Z", "logs_%Y-%m-%d-%H"]
+
+        for format in formatStrings:
+            self.assertEquals(time.strftime(format), self.set.identifiString(format), "Setup, good time string based log table nameing test failed!")
+
+    def test_identifiString_bad(self):
+        formatStrings = ["logs_%x", "logs_%X", "logs_%c"]
+
+        set = setup()
+        for format in formatStrings:
+            self.assertEquals("", self.set.identifiString(format), "Setup, bad time string based log table nameing test failed!")
 
 if __name__ == '__main__':
     unittest.main()

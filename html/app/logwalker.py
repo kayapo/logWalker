@@ -1,8 +1,8 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 __author__="kayapo"
 __date__ ="$2011.02.14. 12:22:35$"
-
 
 import cgi
 
@@ -12,22 +12,25 @@ import re
 
 from lib.log import log
 from lib.db import db
-from conf.Config import Config
+#from conf.Config import Config
+from lib.setup import setup
 from lib.JSONify import JSONify
 
 #if Config.debug == 1:
 #    import cgitb
 #    cgitb.enable()
 
+SET = setup()
+dbObj = db(SET.getMySQLhost(), SET.getMySQLuser(), SET.getMySQLpassword(), SET.getMySQLdatabase())
+dbConn = dbObj.connector()
+
 def getTags():
     tags = list()
-    dbObj = db(Config.MySQLconnector["host"], Config.MySQLconnector["user"], Config.MySQLconnector["password"], Config.MySQLconnector["database"])
-    dbConn = dbObj.connector()
 
-    unreliableTags = dbObj.runQuery(dbConn, "SELECT * FROM tags;")
+    unreliableTags = dbObj.runQuery(dbConn, "SELECT tag FROM %s GROUP BY tag;" % SET.getMySQLtable())
     for tag in unreliableTags:
         tags.append( {"tag":cgi.escape(tag["tag"], 1)} )
-    if Config.debug == 1:
+    if SET.getLogLevel() >= 3:
         L = log(0, 7, "logwalker.getTags")
         L.logger(str(tags))
 
@@ -35,13 +38,11 @@ def getTags():
 
 def getHosts():
     hosts = list()
-    dbObj = db(Config.MySQLconnector["host"], Config.MySQLconnector["user"], Config.MySQLconnector["password"], Config.MySQLconnector["database"])
-    dbConn = dbObj.connector()
-    
-    unreliableHosts = dbObj.runQuery(dbConn, "SELECT * FROM hosts;")
+
+    unreliableHosts = dbObj.runQuery(dbConn, "SELECT host FROM %s GROUP BY host;" % SET.getMySQLtable())
     for host in unreliableHosts:
         hosts.append( {"host":cgi.escape(host["host"], 1)} )
-    if Config.debug == 1:
+    if SET.getLogLevel() >= 3:
         L = log(0, 7, "logwalker.getHosts")
         L.logger(str(hosts))
 
@@ -49,16 +50,13 @@ def getHosts():
 
 def getRequestValidity(mode):
     """Get list for the validity object"""
-
-    dbObj = db(Config.MySQLconnector["host"], Config.MySQLconnector["user"], Config.MySQLconnector["password"], Config.MySQLconnector["database"])
-    dbConn = dbObj.connector()
     ret = list()
 
     if mode == 'hosts':
-        query = 'SELECT * FROM hosts'
+        query = "SELECT host FROM %s GROUP BY host;" % SET.getMySQLtable()
         tag = 'host'
     elif mode == 'tags':
-        query = 'SELECT * FROM tags'
+        query = "SELECT tag FROM %s GROUP BY tag;" % SET.getMySQLtable()
         tag = 'tag'
 
     retObj = dbObj.runQuery(dbConn, query)
@@ -77,7 +75,7 @@ def requestReformat(request):
         for element in request:
             key = element.keys()[0]
             value = element[key]
-            if Config.debug == 1: L.logger('%s => %s' % (key, str(value)))
+            if SET.getLogLevel() >= 5: L.logger('%s => %s' % (key, str(value)))
 
             reformated[key] = value
 
@@ -86,16 +84,17 @@ def requestReformat(request):
 if __name__ == "__main__":
     L = log(0, 7, "logwalker.main")
     J = JSONify()
-    D = db(Config.MySQLconnector["host"], Config.MySQLconnector["user"], Config.MySQLconnector["password"], Config.MySQLconnector["database"])
 
     response = "Cache-Control: no-cache\nPragma: no-cache\nExpires: 0\nContent-Type: text/plain;charset=utf-8\n\n"
     request = cgi.FieldStorage(keep_blank_values=True)
-    if Config.debug == 1: L.logger("postRawData: " + str(request))
+    if SET.getLogLevel() >= 7: L.logger("postRawData: " + str(request))
 
     try:
         requestKey = request.keys()[0]
         requestValue = str(request[request.keys()[0]].value)
         requestValue = re.sub("[\n\r]", " ", requestValue)
+        requestValue = re.sub(r"[^\\]\\[^\\]", r"\\\\", requestValue)
+
     except IndexError, e:
         L.logger("Error: %s" % e.args[0])
         requestKey = ''
@@ -105,7 +104,7 @@ if __name__ == "__main__":
             response += json.dumps(getHosts())
         elif requestValue == 'tags':
             response += json.dumps(getTags())
-        if Config.debug == 1:
+        if SET.getLogLevel() >= 5:
             L.logger("requestKey = " + requestKey)
             L.logger("requestValue = " + requestValue)
 
@@ -113,7 +112,7 @@ if __name__ == "__main__":
 
 
         jsonreq = json.loads(requestValue)
-        if Config.debug == 1: L.logger('JSON string = ' + str(jsonreq))
+        if SET.getLogLevel() >= 5: L.logger('JSON string = ' + str(jsonreq))
 
         reformatedRequest = requestReformat(jsonreq)
 
@@ -122,11 +121,10 @@ if __name__ == "__main__":
         
         validatedRequest = J.validityCheck(reformatedRequest)
 
-        if Config.debug == 1: L.logger("sql Query = " + J.objectToSQL(reformatedRequest))
+        if SET.getLogLevel() >= 5: L.logger("sql Query = " + J.objectToSQL(reformatedRequest))
         sql = J.objectToSQL(reformatedRequest)
-        dbConn = D.connector()
 
-        response += json.dumps(D.runQuery(dbConn, sql))
+        response += json.dumps(dbObj.runQuery(dbConn, sql))
 
     elif requestKey == '':
         response = "Status: 301 Permanently moved\nLocation: /index.html\n"
