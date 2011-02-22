@@ -4,7 +4,7 @@
 --
 --
 
-CREATE DATABASE IF NOT EXSISTS syslog DEFAULT CHARACTEr SET=utf8 DEFAULT COLLATE=utf8_general_ci;
+CREATE DATABASE IF NOT EXISTS syslog DEFAULT CHARACTEr SET=utf8 DEFAULT COLLATE=utf8_general_ci;
 USE syslog;
 
 -- create table named logs
