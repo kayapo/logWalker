@@ -30,4 +30,4 @@ class Config():
                       'database':'syslog',
                       'table':'logs'
                      }
-    loglevel = 9
+    loglevel = 0

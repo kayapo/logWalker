@@ -12,13 +12,8 @@ import re
 
 from lib.log import log
 from lib.db import db
-#from conf.Config import Config
 from lib.setup import setup
 from lib.JSONify import JSONify
-
-#if Config.debug == 1:
-#    import cgitb
-#    cgitb.enable()
 
 SET = setup()
 dbObj = db(SET.getMySQLhost(), SET.getMySQLuser(), SET.getMySQLpassword(), SET.getMySQLdatabase())
