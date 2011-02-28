@@ -2,6 +2,7 @@ __author__="kayapo"
 __date__ ="$2011.02.14. 7:47:29$"
 
 import syslog
+import re
 
 class log():
     """
@@ -29,6 +30,8 @@ class log():
 
     def logger(self, message):
         """Send log message to the syslog with preset parameters"""
+        message = re.sub("[\n\r]+", " ", message)
+        message = message[:950]
 
         syslog.openlog(self.syslogtag, (syslog.LOG_PID + syslog.LOG_NOWAIT), self.facility)
         syslog.syslog(self.priority, message)

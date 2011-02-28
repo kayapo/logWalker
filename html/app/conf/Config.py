@@ -25,8 +25,8 @@ class Config():
     ##	%%	A literal '%' character.
     MySQLconnector = {
                       'host':'localhost',
-                      'user':'user',
-                      'password':'userpassword',
+                      'user':'syslog',
+                      'password':'funguQue4eixu9Ob',
                       'database':'syslog',
                       'table':'logs'
                      }

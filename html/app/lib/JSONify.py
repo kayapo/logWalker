@@ -117,7 +117,6 @@ class JSONify():
                     # Wow, it is unbelievable:
                     valueUnreliable = re.sub(re.escape("\\"), "\\\\", r"%s" % valueUnreliable)
                     value = re.sub("""([/|&{}#@^~'";-])""", lambda m: "\%s" % m.group(1), r"%s" % valueUnreliable)
-                    L.logger('value = ' + value)
                     
                 validatedJSONDict[key] = value
 
@@ -127,6 +126,7 @@ class JSONify():
         """Cleanup <script></script> tags from message"""
         retMsg = ()
         for mLine in msg:
+            mLine["message"] = unicode(mLine["message"], errors='replace')
             mLine["message"] = re.sub("<(script[^<>]*/*)>", lambda m: "&lt;%s&gt;" % m.group(1), r"%s" % mLine["message"])
             mLine["message"] = re.sub("<(link[^<>]*/*)>", lambda m: "&lt;%s&gt;" % m.group(1), r"%s" % mLine["message"])
             mLine["message"] = re.sub("</script>", "&lt;/script&gt;", r"%s" % mLine["message"])

@@ -26,7 +26,7 @@ def getTags():
     for tag in unreliableTags:
         tags.append( {"tag":cgi.escape(tag["tag"], 1)} )
     if SET.getLogLevel() >= 3:
-        L = log(0, 7, "logwalker.getTags")
+        L = log(0, 0, "logwalker.getTags")
         L.logger(str(tags))
 
     return tags
@@ -38,7 +38,7 @@ def getHosts():
     for host in unreliableHosts:
         hosts.append( {"host":cgi.escape(host["host"], 1)} )
     if SET.getLogLevel() >= 3:
-        L = log(0, 7, "logwalker.getHosts")
+        L = log(0, 0, "logwalker.getHosts")
         L.logger(str(hosts))
 
     return hosts
@@ -63,7 +63,7 @@ def getRequestValidity(mode):
 def requestReformat(request):
     """Reformat request list to another format"""
 
-    L = log(0, 7, "logwalker.requestReformat")
+    L = log(0, 0, "logwalker.requestReformat")
     reformated = {}
 
     if type(request).__name__ == 'list':
@@ -77,7 +77,7 @@ def requestReformat(request):
     return reformated
 
 if __name__ == "__main__":
-    L = log(0, 7, "logwalker.main")
+    L = log(0, 0, "logwalker.main")
     J = JSONify()
 
     response = "Cache-Control: no-cache\nPragma: no-cache\nExpires: 0\nContent-Type: text/plain;charset=utf-8\n\n"
@@ -88,7 +88,7 @@ if __name__ == "__main__":
         requestKey = request.keys()[0]
         requestValue = str(request[request.keys()[0]].value)
         requestValue = re.sub("[\n\r]", " ", requestValue)
-        requestValue = re.sub(r"[^\\]\\[^\\]", r"\\\\", requestValue)
+        requestValue = re.sub(r"""'""", r"""''""", requestValue)
 
     except IndexError, e:
         L.logger("Error: %s" % e.args[0])
@@ -121,7 +121,6 @@ if __name__ == "__main__":
         sqlResult = dbObj.runQuery(dbConn, sql)
 
         response += json.dumps(J.messageClean(sqlResult))
-        L.logger(response)
 
     elif requestKey == '':
         response = "Status: 301 Permanently moved\nLocation: /index.html\n"
